@@ -13,6 +13,9 @@ const db = mysql.createConnection({
   database: 'food_trucks'
 });
 
+const path = require('path');
+app.use(express.static(path.join(__dirname, 'public')));
+
 app.get('/trucks', (req, res) => {
   db.query('SELECT * FROM trucks', (err, results) => {
     if (err) return res.status(500).send(err);
