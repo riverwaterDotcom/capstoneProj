@@ -14,11 +14,18 @@ app.get('/', (req, res) => {
 });
 
 // Replace with your Azure DB info:
-const db = mysql.createConnection({
+const db = mysql.createPool({
   host: 'truck-db.mysql.database.azure.com',
   user: 'capuser@truck-db.mysql.database.azure.com',
   password: 'projPass1!',
-  database: 'food_trucks'
+  database: 'food_trucks',
+  port: 3306,
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0,
+  ssl: {
+    rejectUnauthorized: false
+  }
 });
 
 // GET trucks
