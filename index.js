@@ -17,7 +17,7 @@ app.get('/', (req, res) => {
 const db = mysql.createPool({
   host: 'truck-db.mysql.database.azure.com',
   user: 'capuser@truck-db',
-  password: 'projPass1!',
+  password: 'dbPass1!',
   database: 'food_trucks',
   port: 3306,
   waitForConnections: true,
