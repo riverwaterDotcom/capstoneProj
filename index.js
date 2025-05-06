@@ -21,28 +21,40 @@ const db = mysql.createConnection({
   database: 'food_trucks'
 });
 
+// GET trucks
 app.get('/trucks', (req, res) => {
   db.query('SELECT * FROM trucks', (err, results) => {
-    if (err) return res.status(500).send(err);
+    if (err) {
+      console.error("GET /trucks error:", err); // add this
+      return res.status(500).send("DB error");
+    }
     res.json(results);
   });
 });
 
+// POST truck
 app.post('/trucks', (req, res) => {
   const { id, latitude, longitude } = req.body;
   db.query(
     'INSERT INTO trucks (id, latitude, longitude) VALUES (?, ?, ?)',
     [id, latitude, longitude],
     (err) => {
-      if (err) return res.status(500).send(err);
+      if (err) {
+        console.error("POST /trucks error:", err); // add this
+        return res.status(500).send("DB error");
+      }
       res.sendStatus(200);
     }
   );
 });
 
+// DELETE truck
 app.delete('/trucks/:id', (req, res) => {
   db.query('DELETE FROM trucks WHERE id = ?', [req.params.id], (err) => {
-    if (err) return res.status(500).send(err);
+    if (err) {
+      console.error("DELETE /trucks error:", err); // add this
+      return res.status(500).send("DB error");
+    }
     res.sendStatus(200);
   });
 });
