@@ -13,7 +13,7 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// Replace with your Azure DB info:
+// Azure DB info:
 const db = mysql.createPool({
   host: 'truck-db.mysql.database.azure.com',
   user: 'capuser',
@@ -32,7 +32,7 @@ const db = mysql.createPool({
 app.get('/trucks', (req, res) => {
   db.query('SELECT * FROM trucks', (err, results) => {
     if (err) {
-      console.error("GET /trucks error:", err); // add this
+      console.error("GET /trucks error:", err);
       return res.status(500).send("DB error");
     }
     res.json(results);
@@ -47,7 +47,7 @@ app.post('/trucks', (req, res) => {
     [id, latitude, longitude],
     (err) => {
       if (err) {
-        console.error("POST /trucks error:", err); // add this
+        console.error("POST /trucks error:", err);
         return res.status(500).send("DB error");
       }
       res.sendStatus(200);
@@ -59,7 +59,7 @@ app.post('/trucks', (req, res) => {
 app.delete('/trucks/:id', (req, res) => {
   db.query('DELETE FROM trucks WHERE id = ?', [req.params.id], (err) => {
     if (err) {
-      console.error("DELETE /trucks error:", err); // add this
+      console.error("DELETE /trucks error:", err);
       return res.status(500).send("DB error");
     }
     res.sendStatus(200);
