@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Find Food Trucks</title>
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    crossorigin=""
+  />
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      font-family: 'Times New Roman', Times, serif;
+    }
+    #map {
+      flex: 2;
+    }
+    #sidebar {
+      flex: 1;
+      padding: 10px;
+      overflow-y: auto;
+      background: #ffffff;
+    }
+    input {
+      margin-bottom: 10px;
+      width: 100%;
+      padding: 6px;
+    }
+    ul {
+      list-style-type: none;
+      padding-left: 0;
+    }
+    li {
+      margin-bottom: 6px;
+    }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+  <div id="sidebar">
+    <h2>Find Food Trucks</h2>
+    <input type="text" id="searchInput" placeholder="Search by name or 'lat,lng'" />
+    <ul id="truckList"></ul>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+  <script>
+    const API_URL = "https://capstoneproj-b4hbcbcxe5fdczbp.westus-01.azurewebsites.net/trucks";
+
+    const map = L.map("map").setView([47.704685, -122.164576], 14);
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution: "&copy; OpenStreetMap contributors"
+    }).addTo(map);
+
+    const trucks = {};
+    const truckList = document.getElementById("truckList");
+    const searchInput = document.getElementById("searchInput");
+
+    class FoodTruck {
+      constructor(id, lat, lng) {
+        this.id = id;
+        this.lat = lat;
+        this.lng = lng;
+        this.marker = L.marker([lat, lng]).addTo(map);
+        this.marker.bindPopup(`Truck: ${id}`);
+      }
+    }
+
+    function updateList(filter = "") {
+      truckList.innerHTML = "";
+      const isCoordSearch = /^-?\d+(\.\d+)?,-?\d+(\.\d+)?$/.test(filter.trim());
+      
+      Object.values(trucks).forEach(({ id, lat, lng, marker }) => {
+        const matches = isCoordSearch
+          ? (() => {
+              const [sLat, sLng] = filter.split(",").map(Number);
+              const dist = Math.sqrt((lat - sLat) ** 2 + (lng - sLng) ** 2);
+              return dist < 0.05; // basic proximity check
+            })()
+          : id.toLowerCase().includes(filter.toLowerCase());
+
+        marker.setOpacity(matches ? 1 : 0.2);
+        if (matches) {
+          const li = document.createElement("li");
+          li.textContent = `${id} (${lat.toFixed(4)}, ${lng.toFixed(4)})`;
+          li.style.cursor = "pointer";
+          li.onclick = () => {
+            map.setView([lat, lng], 17);
+            marker.openPopup();
+          };
+          truckList.appendChild(li);
+        }
+      });
+
+      if (isCoordSearch) {
+        const [sLat, sLng] = filter.split(",").map(Number);
+        map.setView([sLat, sLng], 15);
+      }
+    }
+
+    fetch(API_URL)
+      .then((res) => res.json())
+      .then((data) => {
+        data.forEach(({ id, latitude, longitude }) => {
+          trucks[id] = new FoodTruck(id, latitude, longitude);
+        });
+        updateList();
+      });
+
+    searchInput.addEventListener("input", (e) => {
+      updateList(e.target.value);
+    });
+  </script>
+</body>
+</html>
