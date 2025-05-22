@@ -72,17 +72,19 @@
     function updateList(filter = "") {
       truckList.innerHTML = "";
       const isCoordSearch = /^-?\d+(\.\d+)?,-?\d+(\.\d+)?$/.test(filter.trim());
-      
-      Object.values(trucks).forEach(({ id, lat, lng, marker }) => {
-        const matches = isCoordSearch
-          ? (() => {
-              const [sLat, sLng] = filter.split(",").map(Number);
-              const dist = Math.sqrt((lat - sLat) ** 2 + (lng - sLng) ** 2);
-              return dist < 0.05; // basic proximity check
-            })()
-          : id.toLowerCase().includes(filter.toLowerCase());
 
-        marker.setOpacity(matches ? 1 : 0.2);
+      Object.values(trucks).forEach(({ id, lat, lng, marker }) => {
+        let matches = false;
+
+        if (isCoordSearch) {
+          const [sLat, sLng] = filter.split(",").map(Number);
+          matches = lat === sLat && lng === sLng;
+        } else {
+          matches = id.toLowerCase().includes(filter.toLowerCase());
+        }
+
+        marker.setOpacity(matches ? 1 : 0);
+
         if (matches) {
           const li = document.createElement("li");
           li.textContent = `${id} (${lat.toFixed(4)}, ${lng.toFixed(4)})`;
