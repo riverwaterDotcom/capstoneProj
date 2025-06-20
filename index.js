@@ -15,7 +15,7 @@ app.get('/', (req, res) => {
 
 // Azure DB info:
 const db = mysql.createPool({
-  host: 'truck-db.mysql.database.azure.com',
+  host: 'cap-proj-db.mysql.database.azure.com',
   user: 'capuser',
   password: process.env.DB_PASSWORD,
   database: 'food_trucks',
