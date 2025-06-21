@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="utf-8" />
-  <title>Food Truck Map</title>
+  <title>Local Resource Admin</title>
   <link
     rel="stylesheet"
     href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
@@ -40,12 +40,12 @@
 <body>
   <div id="map"></div>
   <div id="sidebar">
-    <h2>Food Trucks</h2>
+    <h2>Resources</h2>
     <form id="truckForm">
-      <input type="text" id="truckId" placeholder="Truck Name" required />
+      <input type="text" id="truckId" placeholder="Resource Name" required />
       <input type="number" step="any" id="lat" placeholder="Latitude" required />
       <input type="number" step="any" id="lng" placeholder="Longitude" required />
-      <button type="submit">Add Truck</button>
+      <button type="submit">Add Resource Location</button>
     </form>
     <ul id="truckList"></ul>
   </div>
@@ -68,7 +68,7 @@
         this.lat = lat;
         this.lng = lng;
         this.marker = L.marker([lat, lng]).addTo(map);
-        this.marker.bindPopup(`Truck: ${id}`);
+        this.marker.bindPopup(`Resource: ${id}`);
       }
       remove() {
         map.removeLayer(this.marker);
@@ -115,7 +115,7 @@
       const lng = parseFloat(truckForm.lng.value);
   
       if (trucks[id]) {
-        alert(`Truck ${id} already exists.`);
+        alert(`Entity ${id} already exists.`);
         return;
       }
   
